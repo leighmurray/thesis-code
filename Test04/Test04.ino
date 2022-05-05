@@ -82,16 +82,16 @@ void setup() {
 
 void loop() {
   if (inputBuffer.available() >= 1){
-    uint8_t audioPacket[256];
-    memcpy(&audioPacket[0], inputBuffer.readBuffer(), 256);
-    udp.send(remoteIP,  kAudioPort, audioPacket, 256);
+    uint8_t audioPacket[AUDIO_BLOCK_SAMPLES];
+    memcpy(&audioPacket[0], inputBuffer.readBuffer(), AUDIO_BLOCK_SAMPLES);
+    udp.send(remoteIP,  kAudioPort, audioPacket, AUDIO_BLOCK_SAMPLES);
     inputBuffer.freeBuffer();
   }
 
   uint16_t size = udp.parsePacket();
   if (0 < size && size <= sizeof(buf)) {
     udp.read(buf, size);
-    memcpy(outputBuffer.getBuffer(), &buf[0], 256);
+    memcpy(outputBuffer.getBuffer(), &buf[0], AUDIO_BLOCK_SAMPLES);
     outputBuffer.playBuffer();
   }
 }

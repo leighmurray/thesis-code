@@ -18,7 +18,7 @@ const int myInput = AUDIO_INPUT_LINEIN;
 
 void setup() {
   // put your setup code here, to run once:
-  AudioMemory(12);
+  AudioMemory(128);
   sgtl5000_1.enable();
   sgtl5000_1.inputSelect(myInput);
   sgtl5000_1.volume(1.0);
@@ -27,7 +27,7 @@ void setup() {
 
 void loop() {
   if (inputBuffer.available() >= 1){
-    memcpy(outputBuffer.getBuffer(), inputBuffer.readBuffer(), 256);
+    memcpy(outputBuffer.getBuffer(), inputBuffer.readBuffer(), AUDIO_BLOCK_SAMPLES);
     outputBuffer.playBuffer();
     inputBuffer.freeBuffer();
   }

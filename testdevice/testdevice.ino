@@ -40,9 +40,6 @@ void setup() {
   sgtl5000_1.volume(1.0);
   pinMode(outputVoltagePin, OUTPUT);
   digitalWriteFast(outputVoltagePin, outputVoltage);
-  Serial.print("Press ENTER to begin: ");
-  while(!Serial.available()); // remain here until told to break
-  Serial.println("Starting!");
 }
 
 void testVoltage(){
@@ -72,10 +69,14 @@ void testVoltage(){
 }
 
 void loop() {
+  Serial.print("Press ENTER to begin: ");
+  while(!Serial.available()); // remain here until told to break
+  Serial.read(); // remove the enter character.
+  Serial.println("Starting!");
   for (int i=0; i<numberOfTests; i++) {
       delay(testInterval);
       testVoltage();
   }
-  Serial.print("\nDone!");
-  while(1);
+  Serial.println("\nDone!");
+
 }
