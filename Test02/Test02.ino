@@ -18,8 +18,6 @@ void setup() {
   // put your setup code here, to run once:
   AudioMemory(12);
   sgtl5000_1.enable();
-  sgtl5000_1.lineInLevel(0); // 3.12 p-p
-  sgtl5000_1.lineOutLevel(13); // 3.16 p-p
   sgtl5000_1.inputSelect(myInput);
   sgtl5000_1.volume(1.0);
 }
