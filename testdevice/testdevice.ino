@@ -16,8 +16,11 @@ AudioControlSGTL5000     sgtl5000_1;     //xy=438,270
 
 const int myInput = AUDIO_INPUT_LINEIN;
 
+const int numberOfTests = 100;
+const int testInterval = 1000;
+
 bool outputVoltage = LOW;
-int outputVoltagePin = 24;
+int outputVoltagePin = 33;
 IntervalTimer toggleVoltageTimer;
 
 void toggleOutputVoltage(){
@@ -59,13 +62,17 @@ void testVoltage(){
       }
     }
   }
-  Serial.println("Sample found after: " + String(latencyDuration) + " microseconds");
+  Serial.print(String(latencyDuration) + ",");
   digitalWriteFast(outputVoltagePin, LOW);
   inputBuffer.end();
   inputBuffer.clear();
 }
 
 void loop() {
-  delay(2000);
-  testVoltage();
+  for (int i=0; i<numberOfTests; i++) {
+      delay(testInterval);
+      testVoltage();
+  }
+  Serial.print("\nDone!");
+  while(1);
 }
