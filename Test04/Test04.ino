@@ -35,6 +35,8 @@ AudioControlSGTL5000     sgtl5000_1;     //xy=301.00000762939453,315.00001144409
 
 const int myInput = AUDIO_INPUT_LINEIN;
 IPAddress remoteIP;
+bool bIsServer;
+uint16_t numberOfSampleBytes = AUDIO_BLOCK_SAMPLES * 2;
 
 bool isServer(){
   for (int i=0; i<6; i++){
@@ -46,22 +48,22 @@ bool isServer(){
 }
 
 void setupNetwork () {
-  //Serial.begin(115200);
+  Serial.begin(115200);
   
   Ethernet.macAddress(mac);
-
-  //Serial.printf("MAC = %02x:%02x:%02x:%02x:%02x:%02x\n", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
-  //Serial.println("Setting up static IP");
+  bIsServer = isServer();
+  Serial.printf("MAC = %02x:%02x:%02x:%02x:%02x:%02x\n", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+  Serial.println("Setting up static IP");
   IPAddress subnetMask{255, 255, 255, 0};
   IPAddress serverIP{192, 168, 1, 1};
   IPAddress clientIP{192, 168, 1, 2};
   
-  if (isServer()){
-    //Serial.println("We're the server");
+  if (bIsServer){
+    Serial.println("We're the server");
     Ethernet.begin(serverIP, subnetMask, clientIP);
     remoteIP = clientIP;
   } else {
-    //Serial.println("We're the client");
+    Serial.println("We're the client");
     Ethernet.begin(clientIP, subnetMask, serverIP);
     remoteIP = serverIP;
   }
@@ -73,25 +75,31 @@ void setupNetwork () {
 void setup() {
   // put your setup code here, to run once:
   setupNetwork();
-  AudioMemory(60);
+  AudioMemory(4);
   sgtl5000_1.enable();
-  sgtl5000_1.inputSelect(myInput);
+  if (bIsServer) {
+    sgtl5000_1.inputSelect(myInput);
+    inputBuffer.begin();
+  }
   sgtl5000_1.volume(1.0);
-  inputBuffer.begin();
+  
 }
 
 void loop() {
-  if (inputBuffer.available() >= 1){
-    uint8_t audioPacket[AUDIO_BLOCK_SAMPLES];
-    memcpy(&audioPacket[0], inputBuffer.readBuffer(), AUDIO_BLOCK_SAMPLES);
-    udp.send(remoteIP,  kAudioPort, audioPacket, AUDIO_BLOCK_SAMPLES);
-    inputBuffer.freeBuffer();
+  if (bIsServer) {
+    if (inputBuffer.available() >= 1){
+      uint8_t audioPacket[numberOfSampleBytes];
+      memcpy(&audioPacket[0], inputBuffer.readBuffer(), numberOfSampleBytes);
+      udp.send(remoteIP,  kAudioPort, audioPacket, numberOfSampleBytes);
+      inputBuffer.freeBuffer();
+    }
   }
-
-  uint16_t size = udp.parsePacket();
-  if (0 < size && size <= sizeof(buf)) {
-    udp.read(buf, size);
-    memcpy(outputBuffer.getBuffer(), &buf[0], AUDIO_BLOCK_SAMPLES);
-    outputBuffer.playBuffer();
+  else {
+    uint16_t size = udp.parsePacket();
+    if (0 < size && size <= sizeof(buf)) {
+      udp.read(buf, size);
+      memcpy(outputBuffer.getBuffer(), &buf[0], numberOfSampleBytes);
+      outputBuffer.playBuffer();
+    }
   }
 }
