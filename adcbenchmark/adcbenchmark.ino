@@ -10,15 +10,12 @@ void setup() {
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-  
-
   elapsedMicros latency;
   digitalWriteFast(outputPin, HIGH);
 
   while(!digitalReadFast(readPin));
   uint16_t measuredLatency = latency;
-  
+
   Serial.print(String(measuredLatency) + ",");
 
   //Serial.println("\nDone");
