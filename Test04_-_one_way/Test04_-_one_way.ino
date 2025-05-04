@@ -4,7 +4,6 @@
 #include <SD.h>
 #include <SerialFlash.h>
 #include <QNEthernet.h>
-#include <QNDNSClient.h>
 
 using namespace qindesign::network;
 

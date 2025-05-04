@@ -1,5 +1,4 @@
 #include <QNEthernet.h>
-#include <QNDNSClient.h>
 
 using namespace qindesign::network;
 

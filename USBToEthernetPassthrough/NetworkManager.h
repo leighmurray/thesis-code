@@ -2,7 +2,6 @@
 #define NETWORK_MANAGER_H
 
 #include <QNEthernet.h>
-#include <QNDNSClient.h>
 #include "StorageManager.h"
 
 using namespace qindesign::network;

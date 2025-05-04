@@ -40,7 +40,7 @@ void loop() {
     outputBufferLeft.playBuffer();
     inputBufferLeft.freeBuffer();
   }
-    if (inputBufferRight.available() >= 1){
+  if (inputBufferRight.available() >= 1){
     memcpy(outputBufferRight.getBuffer(), inputBufferRight.readBuffer(), 256);
     outputBufferRight.playBuffer();
     inputBufferRight.freeBuffer();
