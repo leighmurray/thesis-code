@@ -79,7 +79,7 @@ void setupNetwork () {
 void setup() {
   // put your setup code here, to run once:
   setupNetwork();
-  AudioMemory(4);
+  AudioMemory(128);
   sgtl5000_1.enable();
   sgtl5000_1.inputSelect(myInput);
   outputBufferLeft.setMaxBuffers(2);
